@@ -20,24 +20,25 @@ public class Steam {
 	private List<String> SteamAppArray = new ArrayList<String>();
 	public String[] SteamAppDirectory;
 	
-	public Steam() {
+	public Steam() throws Exception {
 		System.out.println("[Steam] Initialize...");
 		
+		String Directory;
 		switch(OSName.substring(0, 3)) {
 			case "win":
 				this.getOperatingSystem = OS_WINDOWS;
-				String Directory = this.getRegeditKey("HKEY_LOCAL_MACHINE\\SOFTWARE\\Wow6432Node\\Valve\\Steam", "InstallPath");
+				Directory = this.getRegeditKey("HKEY_LOCAL_MACHINE\\SOFTWARE\\Wow6432Node\\Valve\\Steam", "InstallPath");
 				SteamDirectory = (new File(Directory).exists()) ? Directory : null;
-				
-				System.out.println("[Steam] Steam directory find !");
-				
+				this.addSteamAppDirectory(this.SteamDirectory);
 				break;
-			case "nix":
+			case "lin":
 				this.getOperatingSystem = OS_UNIX;
+				Directory = "/home/" + System.getProperty("user.name") + "/.steam/";
+				SteamDirectory = (new File(Directory).exists()) ? Directory : null;
+				this.addSteamAppDirectory(this.SteamDirectory);
 				break;
 			default:
-				System.err.println("Operating System is not supported for Steam !");
-				break;
+				throw new Exception("Operating System is not supported for Steam !");
 		}
 		
 		String ConfigFilePath = SteamDirectory + File.separator + "config" + File.separator + "config.vdf";
